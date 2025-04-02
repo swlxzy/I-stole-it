@@ -163,4 +163,6 @@ class MAIN:
         global CHECKPOINT, BAD, FAILED
         try:
             self.LOGO()
-            printf(Panel(f"[bold white]Please fill in your Instagram account details such as username and password, use `[bold red]:[bold white]` as a\nseparator, you must also use a fake account to log in!", width=59
+            printf(Panel(f"[bold white]Please fill in your Instagram account details such as username and password, use `[bold red]:[bold white]` as a\nseparator, you must also use a fake account to log in!", width=59))
+        except Exception as e:
+            print(f"Error: {e}")
