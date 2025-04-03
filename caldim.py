@@ -32,19 +32,19 @@ class KIRIMKAN:
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
             'Connection': 'keep-alive'
         })
-        response = session.get('https://{}/login'.format(host))
+        response = session.get(f'https://{host}/login')
         self.ANTI_FORGERY_TOKEN = re.search(r'"&antiForgeryToken=(.*?)";', str(response.text))
         if self.ANTI_FORGERY_TOKEN != None:
             self.TOKEN = self.ANTI_FORGERY_TOKEN.group(1)
             session.headers.update({
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
                 'Sec-Fetch-Site': 'same-origin',
-                'Referer': 'https://{}/login'.format(host),
+                'Referer': f'https://{host}/login',
                 'Sec-Fetch-Mode': 'cors',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Sec-Fetch-Dest': 'empty',
-                'Cookie': '; '.join([str(key) + '=' + str(value) for key, value in session.cookies.get_dict().items()]),
-                'Origin': 'https://{}'.format(host)
+                'Cookie': '; '.join([f'{key}={value}' for key, value in session.cookies.get_dict().items()]),
+                'Origin': f'https://{host}'
             })
             data = {
                 'username': f'{username}',
@@ -52,28 +52,28 @@ class KIRIMKAN:
                 'userid': '',
                 'password': f'{password}'
             }
-            response2 = session.post('https://{}/login?'.format(host), data=data)
+            response2 = session.post(f'https://{host}/login?', data=data)
             self.JSON_RESPONSE = json.loads(response2.text)
             if '\'status\': \'success\'' in str(self.JSON_RESPONSE):
                 session.headers.update({
-                    'Referer': 'https://{}/tools/send-follower'.format(host),
-                    'Cookie': '; '.join([str(key) + '=' + str(value) for key, value in session.cookies.get_dict().items()])
+                    'Referer': f'https://{host}/tools/send-follower',
+                    'Cookie': '; '.join([f'{key}={value}' for key, value in session.cookies.get_dict().items()])
                 })
                 data = {
                     'username': f'{your_username}',
                 }
-                response3 = session.post('https://{}/tools/send-follower?formType=findUserID'.format(host), data=data)
+                response3 = session.post(f'https://{host}/tools/send-follower?formType=findUserID', data=data)
                 if 'name="userID"' in str(response3.text):
                     self.USER_ID = re.search(r'name="userID" value="(\d+)">', str(response3.text)).group(1)
                     session.headers.update({
-                        'Cookie': '; '.join([str(key) + '=' + str(value) for key, value in session.cookies.get_dict().items()])
+                        'Cookie': '; '.join([f'{key}={value}' for key, value in session.cookies.get_dict().items()])
                     })
                     data = {
                         'userName': f'{your_username}',
                         'adet': '500',
                         'userID': f'{self.USER_ID}',
                     }
-                    response4 = session.post('https://{}/tools/send-follower/{}?formType=send'.format(host, self.USER_ID), data=data)
+                    response4 = session.post(f'https://{host}/tools/send-follower/{self.USER_ID}?formType=send', data=data)
                     self.JSON_RESPONSE4 = json.loads(response4.text)
                     if '\'status\': \'success\'' in str(self.JSON_RESPONSE4):
                         SUKSES.append(f'{self.JSON_RESPONSE4}')
@@ -137,7 +137,7 @@ class INFORMASI:
                 'Host': 'i.instagram.com',
                 'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
             })
-            response = session.get('https://i.instagram.com/api/v1/users/web_profile_info/?username={}'.format(your_username))
+            response = session.get(f'https://i.instagram.com/api/v1/users/web_profile_info/?username={your_username}')
             if '"status":"ok"' in str(response.text):
                 self.EDGE_FOLLOWED_BY = json.loads(response.text)['data']['user']['edge_followed_by']['count']
                 if bool(updated) == True:
